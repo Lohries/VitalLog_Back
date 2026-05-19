@@ -1,0 +1,39 @@
+databases:
+  - name: vitallog-db
+    databaseName: vitallog
+    user: vitallog_user
+    plan: free
+
+services:
+  - type: web
+    name: vitallog-api
+    env: java
+    plan: free
+    buildCommand: ./mvnw package -DskipTests
+    startCommand: java -jar target/vitalog-back-0.0.1-SNAPSHOT.jar
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: vitallog-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: vitallog-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: vitallog-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: vitallog-db
+          property: user
+      - key: DB_PASS
+        fromDatabase:
+          name: vitallog-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://vitallog-front.vercel.app,http://localhost:4200
